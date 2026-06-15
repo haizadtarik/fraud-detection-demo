@@ -1,0 +1,59 @@
+paths:
+  raw:          data/01_raw/paysim_raw.csv
+  sample:       data/01_raw/paysim_sample.csv
+  intermediate: data/02_intermediate/transactions_clean.parquet
+  features:     data/03_features/feature_table.parquet
+  model:        data/04_models/lgbm_fraud.pkl
+
+sample:
+  n_legit: 200000          # downsample majority so a runnable sample fits in git
+  random_state: 42
+
+split:
+  test_size: 0.2
+  random_state: 42
+
+features:
+  night_start_hour: 0
+  night_end_hour: 6
+  drop_days: [30]            # boundary artifact: final day is 100% fraud
+
+split:
+  strategy: temporal         # train on past, test on future — not random
+  train_max_day: 22          # train: day <= 22  |  test: day >= 23
+  random_state: 42
+
+model:
+  params:
+    objective: binary
+    n_estimators: 400
+    learning_rate: 0.05
+    num_leaves: 31
+    max_depth: -1
+    min_child_samples: 200      # guards against tiny leaves overfitting rare fraud
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    n_jobs: -1
+    random_state: 42
+    verbosity: -1
+  early_stopping_rounds: 100
+  early_stopping_metric: auc
+
+evaluate:
+  precision_at_k: [100, 500, 1000]   # realistic daily review capacities
+  cost_matrix:
+    cost_fn: 100                       # missed fraud: money out the door (relative units)
+    cost_fp: 1                         # blocked legit txn: customer friction + review cost
+  calibration_bins: 10
+
+mlflow:
+  experiment_name: fraud-detection
+  tracking_uri: ""                     # empty => local ./mlruns
+
+serving:
+  decision_bands:
+    step_up: 0.10     # moderate risk → extra auth challenge
+    hold:    0.50     # elevated → hold for review
+    block:   0.90     # high → block outright

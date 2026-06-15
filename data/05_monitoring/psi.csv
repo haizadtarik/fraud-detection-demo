@@ -1,0 +1,11 @@
+feature,psi,band
+hour,0.1583,moderate_shift
+dest_prior_amount_mean,0.0142,stable
+dest_prior_amount_sum,0.0102,stable
+dest_prior_txn_count,0.008,stable
+amount,0.0008,stable
+is_transfer,0.0,stable
+dest_is_merchant,0.0,stable
+is_night,0.0,stable
+dest_is_new,0.0,stable
+orig_prior_txn_count,0.0,stable

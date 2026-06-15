@@ -1,0 +1,19 @@
+# Core ML
+pandas==2.3.3
+numpy==2.4.6
+scikit-learn==1.9.0
+lightgbm==4.6.0
+pyarrow==24.0.0
+mlflow==3.13.0
+matplotlib==3.11.0
+seaborn==0.13.2
+fastapi==0.136.3
+uvicorn[standard]==0.49.0
+streamlit==1.58.0
+pydantic==2.13.4
+evidently==0.7.21
+pytest==9.1.0
+ruff==0.15.17
+pre-commit==4.4.0
+pyyaml==6.0.3
+jupyterlab>=4.5.8

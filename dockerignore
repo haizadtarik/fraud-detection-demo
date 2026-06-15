@@ -1,0 +1,9 @@
+.venv/
+data/01_raw/
+data/03_features/
+data/05_monitoring/
+mlruns/
+__pycache__/
+*.pyc
+.git/
+notebooks/
