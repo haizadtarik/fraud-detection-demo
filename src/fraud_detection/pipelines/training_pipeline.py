@@ -1,5 +1,6 @@
-import argparse, logging, joblib
-import numpy as np
+import argparse
+import logging
+import joblib
 import mlflow
 from sklearn.calibration import calibration_curve
 

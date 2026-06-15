@@ -1,4 +1,3 @@
-import pandas as pd
 
 # Never enter the model
 EXCLUDED_COLUMNS = [

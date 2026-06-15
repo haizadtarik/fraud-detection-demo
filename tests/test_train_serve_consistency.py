@@ -1,7 +1,6 @@
 import pandas as pd
 from fraud_detection.config import load_params
 from fraud_detection.data.features import FEATURE_COLUMNS, build_features
-from fraud_detection.serving.feature_store import RecipientFeatureStore
 from fraud_detection.serving.app import assemble_features
 from fraud_detection.serving.schemas import Transaction
 

@@ -1,4 +1,5 @@
-import argparse, logging
+import argparse
+import logging
 from fraud_detection.config import load_params, PROJECT_ROOT
 from fraud_detection.data.load import load_raw, clean
 from fraud_detection.data.features import build_features, FEATURE_COLUMNS
