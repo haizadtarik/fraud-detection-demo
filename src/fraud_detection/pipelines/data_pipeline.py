@@ -7,6 +7,7 @@ from fraud_detection.data.features import build_features, FEATURE_COLUMNS
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger("data_pipeline")
 
+
 def main(source: str):
     params = load_params()
 
@@ -26,6 +27,7 @@ def main(source: str):
     out.parent.mkdir(parents=True, exist_ok=True)
     feats.to_parquet(out, index=False)
     log.info(f"Wrote feature table -> {out}")
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

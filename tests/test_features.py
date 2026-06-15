@@ -1,24 +1,29 @@
 import pandas as pd
 from fraud_detection.config import load_params
 from fraud_detection.data.features import (
-    build_features, FEATURE_COLUMNS, EXCLUDED_COLUMNS, TARGET,
+    build_features,
+    FEATURE_COLUMNS,
+    EXCLUDED_COLUMNS,
+    TARGET,
 )
 
 
 def _toy_transactions():
     """Small hand-built history so cumulative features have something to accumulate."""
-    return pd.DataFrame({
-        "step":    [1, 1, 2, 3, 3, 4],
-        "type":    ["TRANSFER", "CASH_OUT", "TRANSFER", "CASH_OUT", "TRANSFER", "CASH_OUT"],
-        "amount":  [100.0, 200.0, 150.0, 300.0, 50.0, 400.0],
-        "nameOrig":["C1", "C2", "C3", "C1", "C4", "C5"],
-        "nameDest":["C9", "C9", "M1", "C9", "C8", "C8"],
-        "oldbalanceOrg":  [1000., 2000., 1500., 700., 500., 900.],
-        "newbalanceOrig": [900., 1800., 1350., 400., 450., 500.],
-        "oldbalanceDest": [0., 100., 0., 300., 0., 50.],
-        "newbalanceDest": [100., 300., 0., 600., 50., 450.],
-        "isFraud": [0, 0, 0, 1, 0, 1],
-    })
+    return pd.DataFrame(
+        {
+            "step": [1, 1, 2, 3, 3, 4],
+            "type": ["TRANSFER", "CASH_OUT", "TRANSFER", "CASH_OUT", "TRANSFER", "CASH_OUT"],
+            "amount": [100.0, 200.0, 150.0, 300.0, 50.0, 400.0],
+            "nameOrig": ["C1", "C2", "C3", "C1", "C4", "C5"],
+            "nameDest": ["C9", "C9", "M1", "C9", "C8", "C8"],
+            "oldbalanceOrg": [1000.0, 2000.0, 1500.0, 700.0, 500.0, 900.0],
+            "newbalanceOrig": [900.0, 1800.0, 1350.0, 400.0, 450.0, 500.0],
+            "oldbalanceDest": [0.0, 100.0, 0.0, 300.0, 0.0, 50.0],
+            "newbalanceDest": [100.0, 300.0, 0.0, 600.0, 50.0, 450.0],
+            "isFraud": [0, 0, 0, 1, 0, 1],
+        }
+    )
 
 
 def test_no_leaky_columns_in_features():

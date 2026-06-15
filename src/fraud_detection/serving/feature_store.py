@@ -4,6 +4,7 @@ from fraud_detection.config import load_params, PROJECT_ROOT
 
 log = logging.getLogger("feature_store")
 
+
 class RecipientFeatureStore:
     def __init__(self):
         self._store: dict[str, dict] = {}
@@ -17,12 +18,15 @@ class RecipientFeatureStore:
 
         # Mirror the TRAINING aggregation, taking each recipient's final running state.
         g = df.groupby("nameDest")
-        agg = pd.DataFrame({
-            "dest_prior_txn_count": g.size(),
-            "dest_prior_amount_sum": g["amount"].sum(),
-        })
+        agg = pd.DataFrame(
+            {
+                "dest_prior_txn_count": g.size(),
+                "dest_prior_amount_sum": g["amount"].sum(),
+            }
+        )
         agg["dest_prior_amount_mean"] = (
-            agg["dest_prior_amount_sum"] / agg["dest_prior_txn_count"].where(agg["dest_prior_txn_count"] > 0)
+            agg["dest_prior_amount_sum"]
+            / agg["dest_prior_txn_count"].where(agg["dest_prior_txn_count"] > 0)
         ).fillna(0.0)
         self._store = agg.to_dict("index")
         self._global_mean_inflow = float(df["amount"].mean())

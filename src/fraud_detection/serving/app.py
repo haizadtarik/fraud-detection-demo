@@ -16,6 +16,7 @@ log = logging.getLogger("serving")
 
 STATE: dict = {}
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     params = load_params()
@@ -30,7 +31,9 @@ async def lifespan(app: FastAPI):
     yield
     STATE.clear()
 
+
 app = FastAPI(title="Fraud Detection Service", version="0.1.0", lifespan=lifespan)
+
 
 def assemble_features(txn: Transaction, store_feats: dict) -> pd.DataFrame:
     hour = txn.step % 24
@@ -44,19 +47,25 @@ def assemble_features(txn: Transaction, store_feats: dict) -> pd.DataFrame:
         "dest_prior_amount_sum": store_feats["dest_prior_amount_sum"],
         "dest_prior_amount_mean": store_feats["dest_prior_amount_mean"],
         "dest_is_new": store_feats["dest_is_new"],
-        "orig_prior_txn_count": 0,   # cold at serving; degenerate anyway (validated null)
+        "orig_prior_txn_count": 0,  # cold at serving; degenerate anyway (validated null)
     }
     return pd.DataFrame([row])[FEATURE_COLUMNS]
 
+
 def decide(prob: float, bands: dict) -> tuple[str, str]:
-    if prob >= bands["block"]:        return "BLOCK", "model_high_risk"
-    if prob >= bands["hold"]:         return "HOLD", "model_elevated_risk"
-    if prob >= bands["step_up"]:      return "STEP_UP_AUTH", "model_moderate_risk"
+    if prob >= bands["block"]:
+        return "BLOCK", "model_high_risk"
+    if prob >= bands["hold"]:
+        return "HOLD", "model_elevated_risk"
+    if prob >= bands["step_up"]:
+        return "STEP_UP_AUTH", "model_moderate_risk"
     return "ALLOW", "model_low_risk"
+
 
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": "model" in STATE}
+
 
 @app.post("/score", response_model=ScoreResponse)
 def score(txn: Transaction):
@@ -67,8 +76,10 @@ def score(txn: Transaction):
     rule_decision, rule_name = apply_rules(txn, store_feats["dest_is_new"])
     if rule_decision is not None:
         return ScoreResponse(
-            decision=rule_decision, fraud_probability=-1.0,
-            reason=f"rule:{rule_name}", rule_triggered=rule_name,
+            decision=rule_decision,
+            fraud_probability=-1.0,
+            reason=f"rule:{rule_name}",
+            rule_triggered=rule_name,
             latency_ms=round((time.perf_counter() - t0) * 1000, 2),
         )
 
@@ -79,7 +90,9 @@ def score(txn: Transaction):
     # 4. Tiered decision.
     decision, reason = decide(prob, STATE["bands"])
     return ScoreResponse(
-        decision=decision, fraud_probability=round(prob, 4),
-        reason=reason, rule_triggered=None,
+        decision=decision,
+        fraud_probability=round(prob, 4),
+        reason=reason,
+        rule_triggered=None,
         latency_ms=round((time.perf_counter() - t0) * 1000, 2),
     )
